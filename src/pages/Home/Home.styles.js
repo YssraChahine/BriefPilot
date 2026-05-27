@@ -325,17 +325,25 @@ export const CategoryPreviewGrid = styled.div`
 export const CategoryPreviewCard = styled.article`
   min-height: 240px;
   padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radius.large};
   background: rgba(255, 255, 255, 0.72);
   transition:
     transform 0.2s ease,
     border-color 0.2s ease,
-    background 0.2s ease;
+    background 0.2s ease,
+    box-shadow 0.2s ease;
   &:hover {
     transform: translateY(-4px);
     border-color: rgba(37, 99, 235, 0.32);
     background: rgba(255, 255, 255, 0.92);
+    box-shadow: ${({ theme }) => theme.shadows.card};
+  }
+  &:focus-visible {
+    outline: 3px solid ${({ theme }) => theme.colors.primaryLight};
+    outline-offset: 4px;
   }
 `;
 
