@@ -69,21 +69,25 @@ const categoryPreviews = [
     tag: "Beschwerden",
     title: "Wenn etwas schiefgelaufen ist",
     text: "Für Rückerstattung, falsche Lieferung, beschädigte Ware oder schlechten Service.",
+    to: "/erstellen/beschwerde",
   },
   {
     tag: "Widersprüche",
     title: "Wenn du reagieren musst",
     text: "Für Bescheide, Forderungen, Mahnungen oder Entscheidungen, die du prüfen lassen willst.",
+    to: "/erstellen/widerspruch",
   },
   {
     tag: "Vermieter",
     title: "Wenn es sachlich bleiben soll",
     text: "Für Nebenkosten, Mängel, Rückfragen oder klare Kommunikation rund um die Wohnung.",
+    to: "/erstellen/vermieter",
   },
   {
     tag: "Job & Bewerbung",
     title: "Wenn der Ton stimmen muss",
     text: "Für Recruiter-Antworten, Gehaltsvorstellungen, Nachfragen oder professionelle Nachrichten.",
+    to: "/erstellen/bewerbung",
   },
 ];
 
@@ -95,13 +99,12 @@ export function Home() {
           <HeroBadge>Dein Assistent für wichtige Schreiben</HeroBadge>
 
           <HeroTitle>
-            Schreiben, die{" "}
-            <HeroHighlight>ernst genommen</HeroHighlight> werden.
+            Schreiben, die <HeroHighlight>ernst genommen</HeroHighlight> werden.
           </HeroTitle>
 
           <HeroDescription>
             BriefPilot hilft dir, Beschwerden, Widersprüche und wichtige
-            Alltagsschreiben klar, sachlich und professionell zu formulieren —
+            Alltagsschreiben klar, sachlich und professionell zu formulieren,
             Schritt für Schritt.
           </HeroDescription>
 
@@ -172,7 +175,9 @@ export function Home() {
       <Section>
         <SectionHeader>
           <SectionEyebrow>Warum BriefPilot?</SectionEyebrow>
-          <SectionTitle>Weil wichtige Schreiben nicht kompliziert sein müssen.</SectionTitle>
+          <SectionTitle>
+            Weil wichtige Schreiben nicht kompliziert sein müssen.
+          </SectionTitle>
           <SectionDescription>
             Viele Menschen wissen genau, was passiert ist, aber nicht, wie sie
             es richtig formulieren sollen. Genau da setzt BriefPilot an.
@@ -193,7 +198,9 @@ export function Home() {
       <Section>
         <SectionHeader>
           <SectionEyebrow>Kategorien</SectionEyebrow>
-          <SectionTitle>Für Situationen, in denen der richtige Ton zählt.</SectionTitle>
+          <SectionTitle>
+            Für Situationen, in denen der richtige Ton zählt.
+          </SectionTitle>
           <SectionDescription>
             Starte mit einer Kategorie, beantworte ein paar Fragen und erhalte
             einen ersten professionellen Entwurf.
@@ -202,7 +209,7 @@ export function Home() {
 
         <CategoryPreviewGrid>
           {categoryPreviews.map((category) => (
-            <CategoryPreviewCard key={category.tag}>
+            <CategoryPreviewCard key={category.tag} as={Link} to={category.to}>
               <CategoryTag>{category.tag}</CategoryTag>
               <CategoryTitle>{category.title}</CategoryTitle>
               <CategoryText>{category.text}</CategoryText>
