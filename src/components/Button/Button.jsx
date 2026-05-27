@@ -10,11 +10,13 @@ export function Button({
   onClick,
   disabled = false,
 }) {
+  const Component = as || "button";
+
   return (
     <StyledButton
-      as={as}
+      as={Component}
       to={to}
-      type={as ? undefined : type}
+      type={Component === "button" ? type : undefined}
       onClick={onClick}
       disabled={disabled}
       $variant={variant}
