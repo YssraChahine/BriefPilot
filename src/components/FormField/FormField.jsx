@@ -43,7 +43,9 @@ export function FormField({
 
       {type === "select" && (
         <Select {...sharedProps}>
-          <option value="">Bitte auswählen</option>
+          <option value="" disabled>
+            Bitte auswählen
+          </option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
