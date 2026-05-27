@@ -2,6 +2,8 @@ import styled from "styled-components";
 
 export const AppShell = styled.div`
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background:
     radial-gradient(
       circle at top left,
@@ -17,6 +19,7 @@ export const AppShell = styled.div`
 `;
 
 export const Main = styled.main`
+  flex: 1;
   width: min(1120px, 100%);
   margin: 0 auto;
   padding: 2rem ${({ theme }) => theme.spacing.page} 4rem;
