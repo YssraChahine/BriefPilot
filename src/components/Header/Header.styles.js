@@ -49,6 +49,9 @@ export const LogoText = styled.span`
   font-size: 1.18rem;
   letter-spacing: -0.055em;
   color: ${({ theme }) => theme.colors.text};
+  @media (max-width: 420px) {
+    display: none;
+  }
 `;
 
 export const Navigation = styled.nav`
@@ -87,6 +90,13 @@ export const StyledNavLink = styled(NavLink)`
 export const HeaderActions = styled.div`
   justify-self: end;
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    a {
+      min-height: 2.2rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.82rem;
+    }
+  }
+  @media (max-width: 380px) {
     display: none;
   }
 `;
