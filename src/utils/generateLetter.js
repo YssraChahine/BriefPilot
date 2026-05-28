@@ -32,25 +32,43 @@ function cleanValue(value) {
   return value?.trim() || "";
 }
 
+function getInputLanguageLabel(inputLanguage) {
+  const labels = {
+    de: "Deutsch",
+    en: "Englisch",
+  };
+
+  return labels[inputLanguage] || "Deutsch";
+}
+
+function getOutputLanguageLabel(outputLanguage) {
+  const labels = {
+    de: "Deutsch",
+  };
+
+  return labels[outputLanguage] || "Deutsch";
+}
+
+function createGenerationMeta(answers) {
+  return {
+    inputLanguage: answers.inputLanguage || "de",
+    inputLanguageLabel: getInputLanguageLabel(answers.inputLanguage),
+    outputLanguage: answers.outputLanguage || "de",
+    outputLanguageLabel: getOutputLanguageLabel(answers.outputLanguage),
+    generationMode: "local-template",
+    requiresTranslation: answers.inputLanguage === "en",
+  };
+}
+
 function createSubjectLine(subject) {
   return cleanValue(subject) || "Ihr Anliegen";
 }
 
-function createGreeting(recipient) {
-  const cleanedRecipient = cleanValue(recipient);
-
-  if (!cleanedRecipient) {
-    return "Sehr geehrte Damen und Herren,";
-  }
-
+function createGreeting() {
   return "Sehr geehrte Damen und Herren,";
 }
 
-function createClosing(tone) {
-  if (tone === "streng") {
-    return "Mit freundlichen Grüßen";
-  }
-
+function createClosing() {
   return "Mit freundlichen Grüßen";
 }
 
@@ -63,7 +81,7 @@ function generateComplaintLetter(answers) {
   const subject = createSubjectLine(answers.subject);
 
   const paragraphs = [
-    `${createGreeting(answers.recipient)}`,
+    createGreeting(),
     tone.opening,
     cleanValue(answers.whenHappened)
       ? `Der Vorfall ereignete sich beziehungsweise wurde von mir festgestellt: ${cleanValue(
@@ -76,12 +94,13 @@ function generateComplaintLetter(answers) {
     `Mein Anliegen ist folgendes:\n${cleanValue(answers.goal)}`,
     tone.request,
     "Bitte bestätigen Sie mir den Eingang dieses Schreibens und teilen Sie mir mit, wie der Vorgang weiter bearbeitet wird.",
-    createClosing(answers.tone),
+    createClosing(),
   ];
 
   return {
     subject: `Beschwerde: ${subject}`,
     body: createParagraphs(paragraphs),
+    meta: createGenerationMeta(answers),
   };
 }
 
@@ -90,7 +109,7 @@ function generateObjectionLetter(answers) {
   const subject = createSubjectLine(answers.subject);
 
   const paragraphs = [
-    `${createGreeting(answers.recipient)}`,
+    createGreeting(),
     `hiermit lege ich Widerspruch gegen ${subject} ein.`,
     cleanValue(answers.decisionDate)
       ? `Das betreffende Schreiben beziehungsweise der Bescheid datiert vom ${cleanValue(
@@ -106,12 +125,13 @@ function generateObjectionLetter(answers) {
     `Ich bitte Sie daher um Folgendes:\n${cleanValue(answers.goal)}`,
     tone.request,
     "Bitte bestätigen Sie mir den Eingang dieses Widerspruchs schriftlich.",
-    createClosing(answers.tone),
+    createClosing(),
   ];
 
   return {
     subject: `Widerspruch: ${subject}`,
     body: createParagraphs(paragraphs),
+    meta: createGenerationMeta(answers),
   };
 }
 
@@ -120,7 +140,7 @@ function generateLandlordLetter(answers) {
   const subject = createSubjectLine(answers.subject);
 
   const paragraphs = [
-    `${createGreeting(answers.recipient)}`,
+    createGreeting(),
     tone.opening,
     cleanValue(answers.apartment)
       ? `Es geht um folgende Wohnung beziehungsweise folgendes Mietverhältnis: ${cleanValue(
@@ -133,37 +153,43 @@ function generateLandlordLetter(answers) {
     `Ich bitte Sie daher um Folgendes:\n${cleanValue(answers.goal)}`,
     tone.request,
     "Bitte geben Sie mir hierzu eine schriftliche Rückmeldung.",
-    createClosing(answers.tone),
+    createClosing(),
   ];
 
   return {
-    subject: subject,
+    subject,
     body: createParagraphs(paragraphs),
+    meta: createGenerationMeta(answers),
   };
 }
 
 function generateJobLetter(answers) {
-  const tone = getToneIntro(answers.tone);
   const subject = createSubjectLine(answers.subject);
 
   const roleLine = cleanValue(answers.role)
-    ? `Bezugnehmend auf die Position als ${cleanValue(answers.role)} möchte ich Ihnen gerne antworten.`
+    ? `Bezugnehmend auf die Position als ${cleanValue(
+        answers.role,
+      )} möchte ich Ihnen gerne antworten.`
     : "";
 
   const paragraphs = [
-    `${createGreeting(answers.recipient)}`,
-    roleLine || tone.opening,
-    `Ich möchte Ihnen Folgendes mitteilen:\n${cleanValue(answers.whatHappened)}`,
+    createGreeting(),
+    roleLine ||
+      "ich wende mich an Sie, um Ihnen zu Ihrer Nachricht eine Rückmeldung zu geben.",
+    `Ich möchte Ihnen Folgendes mitteilen:\n${cleanValue(
+      answers.whatHappened,
+    )}`,
     `Mein Ziel beziehungsweise mein Wunsch für den weiteren Verlauf ist:\n${cleanValue(
       answers.goal,
     )}`,
     "Ich freue mich über Ihre Rückmeldung.",
-    createClosing(answers.tone),
+    createClosing(),
   ];
 
   return {
-    subject: subject,
+    subject,
     body: createParagraphs(paragraphs),
+    meta: createGenerationMeta(answers),
   };
 }
 
@@ -181,12 +207,13 @@ export function generateLetter({ categoryId, answers }) {
     return {
       subject: "Entwurf",
       body: createParagraphs([
-        "Sehr geehrte Damen und Herren,",
+        createGreeting(),
         "ich möchte Ihnen den folgenden Sachverhalt mitteilen:",
         cleanValue(answers.whatHappened),
         cleanValue(answers.goal),
-        "Mit freundlichen Grüßen",
+        createClosing(),
       ]),
+      meta: createGenerationMeta(answers),
     };
   }
 

@@ -33,8 +33,10 @@ export function Categories() {
         <InfoTitle>Hinweis</InfoTitle>
         <InfoText>
           BriefPilot hilft dir beim Formulieren und Strukturieren deiner
-          Schreiben. Die App ersetzt keine anwaltliche Beratung und prüft keine
-          rechtlichen Ansprüche verbindlich.
+          Schreiben. Du kannst deine Angaben auf Deutsch oder Englisch machen;
+          der fertige Entwurf ist auf deutsche Schreiben ausgerichtet. Die App
+          ersetzt keine anwaltliche Beratung und prüft keine rechtlichen
+          Ansprüche verbindlich.
         </InfoText>
       </InfoBox>
     </>

@@ -73,6 +73,33 @@ export const CopyStatus = styled.p`
   font-weight: 800;
 `;
 
+export const EditNotice = styled.p`
+  width: fit-content;
+  max-width: 680px;
+  margin: 0 0 1.2rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  border-radius: ${({ theme }) => theme.radius.medium};
+  background: rgba(219, 234, 254, 0.72);
+  color: ${({ theme }) => theme.colors.primaryDark};
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.5;
+`;
+
+export const LanguageModeNotice = styled.p`
+  max-width: 760px;
+  margin: 0 0 1.2rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(245, 158, 11, 0.24);
+  border-radius: ${({ theme }) => theme.radius.medium};
+  background: rgba(254, 243, 199, 0.72);
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.6;
+`;
+
 export const LetterCard = styled.article`
   overflow: hidden;
   border: 1px solid ${({ theme }) => theme.colors.border};
@@ -87,8 +114,9 @@ export const LetterHeader = styled.header`
   background: rgba(248, 250, 252, 0.8);
 `;
 
-export const SubjectLabel = styled.p`
+export const SubjectLabel = styled.label`
   width: fit-content;
+  display: block;
   margin: 0 0 0.55rem;
   padding: 0.35rem 0.62rem;
   border-radius: ${({ theme }) => theme.radius.full};
@@ -144,22 +172,29 @@ export const LetterTextarea = styled.textarea`
   }
 `;
 
-export const LetterParagraph = styled.p`
-  margin: 0 0 1rem;
-  white-space: pre-wrap;
-  color: ${({ theme }) => theme.colors.text};
-  font-size: 1rem;
-  line-height: 1.8;
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
 export const Actions = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem;
   margin-top: 1.2rem;
+`;
+
+export const SmallActionButton = styled.button`
+  align-self: center;
+  border: none;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.textMuted};
+  padding: 0.7rem 0.2rem;
+  font-size: 0.92rem;
+  font-weight: 800;
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+  &:focus-visible {
+    outline: 3px solid ${({ theme }) => theme.colors.primaryLight};
+    outline-offset: 4px;
+    border-radius: ${({ theme }) => theme.radius.small};
+  }
 `;
 
 export const InfoCard = styled.div`
@@ -247,37 +282,5 @@ export const EmptyState = styled.section`
   p {
     color: ${({ theme }) => theme.colors.textMuted};
     line-height: 1.7;
-  }
-`;
-
-export const EditNotice = styled.p`
-  width: fit-content;
-  max-width: 680px;
-  margin: 0 0 1.2rem;
-  padding: 0.7rem 0.9rem;
-  border: 1px solid rgba(37, 99, 235, 0.18);
-  border-radius: ${({ theme }) => theme.radius.medium};
-  background: rgba(219, 234, 254, 0.72);
-  color: ${({ theme }) => theme.colors.primaryDark};
-  font-size: 0.92rem;
-  font-weight: 800;
-  line-height: 1.5;
-`;
-
-export const SmallActionButton = styled.button`
-  align-self: center;
-  border: none;
-  background: transparent;
-  color: ${({ theme }) => theme.colors.textMuted};
-  padding: 0.7rem 0.2rem;
-  font-size: 0.92rem;
-  font-weight: 800;
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary};
-  }
-  &:focus-visible {
-    outline: 3px solid ${({ theme }) => theme.colors.primaryLight};
-    outline-offset: 4px;
-    border-radius: ${({ theme }) => theme.radius.small};
   }
 `;
