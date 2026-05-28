@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
-
+import { useMemo, useState } from "react";
 import { Button } from "../../components/Button/Button";
 import { generateLetter } from "../../utils/generateLetter";
 import {
@@ -18,9 +17,9 @@ import {
   LetterCard,
   LetterHeader,
   SubjectLabel,
-  SubjectTitle,
+  SubjectInput,
   LetterBody,
-  LetterParagraph,
+  LetterTextarea,
   Actions,
   ActionGroup,
   Notice,
@@ -33,6 +32,8 @@ import {
   MetaItem,
   EmptyState,
   CopyStatus,
+  EditNotice,
+  SmallActionButton,
 } from "./Result.styles";
 
 export function Result() {
@@ -40,7 +41,23 @@ export function Result() {
   const state = location.state;
   const [copyStatus, setCopyStatus] = useState("");
 
-  if (!state?.category || !state?.answers) {
+  const generatedLetter = useMemo(() => {
+    if (!state?.category || !state?.answers) {
+      return null;
+    }
+
+    return generateLetter({
+      categoryId: state.category.id,
+      answers: state.answers,
+    });
+  }, [state]);
+
+  const [editableSubject, setEditableSubject] = useState(
+    generatedLetter?.subject || "",
+  );
+  const [editableBody, setEditableBody] = useState(generatedLetter?.body || "");
+
+  if (!state?.category || !state?.answers || !generatedLetter) {
     return (
       <EmptyState>
         <h1>Kein Entwurf vorhanden</h1>
@@ -54,13 +71,11 @@ export function Result() {
 
   const { category, answers } = state;
 
-  const letter = generateLetter({
-    categoryId: category.id,
-    answers,
-  });
+  const fullLetterText = `Betreff: ${editableSubject}\n\n${editableBody}`;
 
-  const paragraphs = letter.body.split("\n\n");
-  const fullLetterText = `Betreff: ${letter.subject}\n\n${letter.body}`;
+  const hasEditedLetter =
+    editableSubject !== generatedLetter.subject ||
+    editableBody !== generatedLetter.body;
 
   async function handleCopyFullLetter() {
     const copied = await copyToClipboard(fullLetterText);
@@ -73,7 +88,7 @@ export function Result() {
   }
 
   async function handleCopySubject() {
-    const copied = await copyToClipboard(letter.subject);
+    const copied = await copyToClipboard(editableSubject);
 
     setCopyStatus(
       copied
@@ -83,7 +98,7 @@ export function Result() {
   }
 
   function handleDownloadTextFile() {
-    const filename = `${createSafeFilename(letter.subject)}.txt`;
+    const filename = `${createSafeFilename(editableSubject)}.txt`;
 
     downloadTextFile({
       filename,
@@ -93,14 +108,20 @@ export function Result() {
     setCopyStatus("Der Entwurf wurde als Textdatei heruntergeladen.");
   }
 
+  function handleResetToOriginal() {
+    setEditableSubject(generatedLetter.subject);
+    setEditableBody(generatedLetter.body);
+    setCopyStatus("Der ursprüngliche Entwurf wurde wiederhergestellt.");
+  }
+
   return (
     <PageGrid>
       <ResultArea>
         <Eyebrow>{category.label}</Eyebrow>
-        <Title>Dein erster Entwurf ist fertig.</Title>
+        <Title>Dein Entwurf ist bereit.</Title>
         <Description>
-          Prüfe den Text, passe persönliche Details an und nutze ihn dann für
-          deine Nachricht, E-Mail oder deinen Brief.
+          Du kannst Betreff und Text direkt bearbeiten. Kopieren und Download
+          verwenden immer deine aktuelle Version.
         </Description>
 
         <ActionGroup aria-label="Aktionen für den Entwurf">
@@ -121,16 +142,29 @@ export function Result() {
 
         {copyStatus && <CopyStatus role="status">{copyStatus}</CopyStatus>}
 
+        {hasEditedLetter && (
+          <EditNotice>
+            Du hast den Entwurf bearbeitet. Deine aktuelle Version wird beim
+            Kopieren und Speichern verwendet.
+          </EditNotice>
+        )}
+
         <LetterCard>
           <LetterHeader>
-            <SubjectLabel>Betreff</SubjectLabel>
-            <SubjectTitle>{letter.subject}</SubjectTitle>
+            <SubjectLabel htmlFor="editable-subject">Betreff</SubjectLabel>
+            <SubjectInput
+              id="editable-subject"
+              value={editableSubject}
+              onChange={(event) => setEditableSubject(event.target.value)}
+            />
           </LetterHeader>
 
           <LetterBody>
-            {paragraphs.map((paragraph) => (
-              <LetterParagraph key={paragraph}>{paragraph}</LetterParagraph>
-            ))}
+            <LetterTextarea
+              aria-label="Brieftext bearbeiten"
+              value={editableBody}
+              onChange={(event) => setEditableBody(event.target.value)}
+            />
           </LetterBody>
         </LetterCard>
 
@@ -145,6 +179,12 @@ export function Result() {
           <Button as={Link} to="/kategorien" variant="secondary">
             Neues Schreiben
           </Button>
+
+          {hasEditedLetter && (
+            <SmallActionButton type="button" onClick={handleResetToOriginal}>
+              Original wiederherstellen
+            </SmallActionButton>
+          )}
         </Actions>
       </ResultArea>
 
@@ -152,8 +192,8 @@ export function Result() {
         <InfoCard>
           <InfoTitle>Entwurfsdetails</InfoTitle>
           <InfoText>
-            Dieser Text wurde aus deinen Antworten erzeugt und sollte vor dem
-            Absenden immer kurz geprüft werden.
+            Dieser Text wurde aus deinen Antworten erzeugt und kann vor dem
+            Absenden frei angepasst werden.
           </InfoText>
 
           <MetaList>
@@ -167,7 +207,7 @@ export function Result() {
             </MetaItem>
             <MetaItem>
               <span>Status</span>
-              <strong>Entwurf</strong>
+              <strong>{hasEditedLetter ? "Bearbeitet" : "Entwurf"}</strong>
             </MetaItem>
           </MetaList>
         </InfoCard>
@@ -175,9 +215,8 @@ export function Result() {
         <Notice>
           <NoticeTitle>Wichtig</NoticeTitle>
           <NoticeText>
-            BriefPilot hilft beim Formulieren. Prüfe Namen, Daten, Beträge,
-            Fristen und rechtlich wichtige Angaben immer selbst, bevor du das
-            Schreiben verschickst.
+            Prüfe Namen, Daten, Beträge, Fristen und rechtlich wichtige Angaben
+            immer selbst, bevor du das Schreiben verschickst.
           </NoticeText>
         </Notice>
       </SidePanel>
