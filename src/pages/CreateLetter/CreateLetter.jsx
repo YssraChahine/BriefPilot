@@ -1,9 +1,14 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../components/Button/Button";
 import { FormField } from "../../components/FormField/FormField";
 import { categories } from "../../data/categories";
 import { formQuestions, toneOptions } from "../../data/formQuestions";
+import {
+  clearSavedForm,
+  loadSavedForm,
+  saveForm,
+} from "../../utils/formStorage";
 import {
   PageGrid,
   FormArea,
@@ -22,6 +27,11 @@ import {
   Checklist,
   ChecklistItem,
   ErrorBox,
+  ProgressTrack,
+  ProgressFill,
+  SaveNotice,
+  SecondaryActions,
+  ResetButton,
 } from "./CreateLetter.styles";
 
 const initialTone = "sachlich";
@@ -31,7 +41,10 @@ export function CreateLetter() {
   const navigate = useNavigate();
 
   const category = categories.find((item) => item.id === categoryId);
-  const questions = formQuestions[categoryId] || [];
+
+  const questions = useMemo(() => {
+    return formQuestions[categoryId] || [];
+  }, [categoryId]);
 
   const initialValues = useMemo(() => {
     return questions.reduce(
@@ -45,6 +58,32 @@ export function CreateLetter() {
 
   const [formValues, setFormValues] = useState(initialValues);
   const [errors, setErrors] = useState({});
+  const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
+  const [hasUserChangedForm, setHasUserChangedForm] = useState(false);
+
+  useEffect(() => {
+    const savedValues = loadSavedForm(categoryId);
+
+    if (savedValues) {
+      setFormValues({
+        ...initialValues,
+        ...savedValues,
+      });
+      setHasLoadedSavedData(true);
+      return;
+    }
+
+    setFormValues(initialValues);
+    setHasLoadedSavedData(false);
+  }, [categoryId, initialValues]);
+
+  useEffect(() => {
+    if (!category || !hasUserChangedForm) {
+      return;
+    }
+
+    saveForm(categoryId, formValues);
+  }, [category, categoryId, formValues, hasUserChangedForm]);
 
   if (!category) {
     return (
@@ -59,6 +98,8 @@ export function CreateLetter() {
   }
 
   function handleChange(fieldId, value) {
+    setHasUserChangedForm(true);
+
     setFormValues((currentValues) => ({
       ...currentValues,
       [fieldId]: value,
@@ -95,6 +136,8 @@ export function CreateLetter() {
       return;
     }
 
+    saveForm(categoryId, formValues);
+
     navigate("/ergebnis", {
       state: {
         category,
@@ -103,13 +146,32 @@ export function CreateLetter() {
     });
   }
 
-  const answeredRequiredQuestions = questions.filter(
-    (question) => question.required && formValues[question.id]?.trim(),
+  function handleResetForm() {
+    const shouldReset = window.confirm(
+      "Möchtest du wirklich alle Eingaben für diese Kategorie löschen?",
+    );
+
+    if (!shouldReset) {
+      return;
+    }
+
+    clearSavedForm(categoryId);
+    setFormValues(initialValues);
+    setErrors({});
+    setHasLoadedSavedData(false);
+    setHasUserChangedForm(false);
+  }
+
+  const requiredQuestions = questions.filter((question) => question.required);
+
+  const answeredRequiredQuestions = requiredQuestions.filter((question) =>
+    formValues[question.id]?.trim(),
   ).length;
 
-  const requiredQuestions = questions.filter(
-    (question) => question.required,
-  ).length;
+  const progress =
+    requiredQuestions.length > 0
+      ? Math.round((answeredRequiredQuestions / requiredQuestions.length) * 100)
+      : 0;
 
   return (
     <PageGrid>
@@ -119,6 +181,13 @@ export function CreateLetter() {
         <Eyebrow>{category.label}</Eyebrow>
         <Title>{category.title}</Title>
         <Description>{category.description}</Description>
+
+        {hasLoadedSavedData && (
+          <SaveNotice>
+            Gespeicherter Entwurf geladen. Du kannst direkt weitermachen oder
+            das Formular zurücksetzen.
+          </SaveNotice>
+        )}
 
         <Form onSubmit={handleSubmit}>
           <FieldGroup>
@@ -160,6 +229,12 @@ export function CreateLetter() {
               Abbrechen
             </Button>
           </Actions>
+
+          <SecondaryActions>
+            <ResetButton type="button" onClick={handleResetForm}>
+              Formular zurücksetzen
+            </ResetButton>
+          </SecondaryActions>
         </Form>
       </FormArea>
 
@@ -168,15 +243,22 @@ export function CreateLetter() {
           <CategoryBadge>
             {category.icon} {category.label}
           </CategoryBadge>
+
           <ProgressTitle>
             Dein Entwurf entsteht aus deinen Antworten.
           </ProgressTitle>
+
           <ProgressText>
             Pflichtfelder ausgefüllt: {answeredRequiredQuestions} von{" "}
-            {requiredQuestions}
+            {requiredQuestions.length}
           </ProgressText>
 
+          <ProgressTrack aria-label={`Fortschritt ${progress} Prozent`}>
+            <ProgressFill $progress={progress} />
+          </ProgressTrack>
+
           <Checklist>
+            <ChecklistItem>Automatische Speicherung im Browser</ChecklistItem>
             <ChecklistItem>Klare Beschreibung des Sachverhalts</ChecklistItem>
             <ChecklistItem>Konkretes Ziel des Schreibens</ChecklistItem>
             <ChecklistItem>Passender Ton für die Situation</ChecklistItem>
