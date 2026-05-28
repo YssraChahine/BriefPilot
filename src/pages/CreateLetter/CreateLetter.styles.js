@@ -161,3 +161,65 @@ export const ErrorBox = styled.section`
     line-height: 1.7;
   }
 `;
+
+export const ProgressTrack = styled.div`
+  width: 100%;
+  height: 0.7rem;
+  overflow: hidden;
+
+  margin-bottom: 1.1rem;
+
+  border-radius: ${({ theme }) => theme.radius.full};
+  background: ${({ theme }) => theme.colors.border};
+`;
+
+export const ProgressFill = styled.div`
+  width: ${({ $progress }) => `${$progress}%`};
+  height: 100%;
+
+  border-radius: inherit;
+  background: ${({ theme }) => theme.colors.primary};
+
+  transition: width 0.25s ease;
+`;
+
+export const SaveNotice = styled.p`
+  width: fit-content;
+  max-width: 680px;
+
+  margin: 0 0 1rem;
+  padding: 0.8rem 1rem;
+
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  border-radius: ${({ theme }) => theme.radius.medium};
+  background: rgba(219, 234, 254, 0.65);
+  color: ${({ theme }) => theme.colors.primaryDark};
+
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.5;
+`;
+
+export const SecondaryActions = styled.div`
+  margin-top: -0.5rem;
+`;
+
+export const ResetButton = styled.button`
+  border: none;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.textMuted};
+
+  padding: 0;
+  font-size: 0.92rem;
+  font-weight: 800;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.danger};
+  }
+
+  &:focus-visible {
+    outline: 3px solid ${({ theme }) => theme.colors.primaryLight};
+    outline-offset: 4px;
+    border-radius: ${({ theme }) => theme.radius.small};
+  }
+`;
