@@ -48,9 +48,9 @@ import {
 
 const benefits = [
   {
-    icon: "✍️",
-    title: "Geführt statt überfordert",
-    text: "BriefPilot stellt dir die richtigen Fragen und macht aus deiner Situation ein klares Schreiben.",
+    icon: "🌍",
+    title: "Englisch rein, deutscher Brief raus",
+    text: "Beschreibe dein Anliegen auf Englisch oder Deutsch. BriefPilot ist auf deutsche Schreiben ausgerichtet.",
   },
   {
     icon: "🧠",
@@ -104,8 +104,9 @@ export function Home() {
 
           <HeroDescription>
             BriefPilot hilft dir, Beschwerden, Widersprüche und wichtige
-            Alltagsschreiben klar, sachlich und professionell zu formulieren,
-            Schritt für Schritt.
+            Alltagsschreiben klar, sachlich und professionell auf Deutsch zu
+            formulieren — auch wenn du deine Situation lieber auf Englisch
+            beschreibst.
           </HeroDescription>
 
           <HeroActions>
@@ -179,7 +180,7 @@ export function Home() {
             Weil wichtige Schreiben nicht kompliziert sein müssen.
           </SectionTitle>
           <SectionDescription>
-            Viele Menschen wissen genau, was passiert ist, aber nicht, wie sie
+            Viele Menschen wissen genau, was passiert ist — aber nicht, wie sie
             es richtig formulieren sollen. Genau da setzt BriefPilot an.
           </SectionDescription>
         </SectionHeader>

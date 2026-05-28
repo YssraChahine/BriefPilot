@@ -189,3 +189,21 @@ export const toneOptions = [
     label: "Streng",
   },
 ];
+
+export const inputLanguageOptions = [
+  {
+    value: "de",
+    label: "Deutsch",
+  },
+  {
+    value: "en",
+    label: "Englisch",
+  },
+];
+
+export const outputLanguageOptions = [
+  {
+    value: "de",
+    label: "Deutsch",
+  },
+];

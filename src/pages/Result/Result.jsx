@@ -34,6 +34,7 @@ import {
   CopyStatus,
   EditNotice,
   SmallActionButton,
+  LanguageModeNotice,
 } from "./Result.styles";
 
 export function Result() {
@@ -149,6 +150,15 @@ export function Result() {
           </EditNotice>
         )}
 
+        {generatedLetter.meta?.requiresTranslation && (
+          <LanguageModeNotice>
+            Du hast Englisch als Eingabesprache gewählt. Der Produktflow ist
+            dafür vorbereitet, daraus einen deutschen Brief zu erstellen. Die
+            echte automatische Übersetzung wird in der nächsten KI-Generator-
+            Phase angeschlossen.
+          </LanguageModeNotice>
+        )}
+
         <LetterCard>
           <LetterHeader>
             <SubjectLabel htmlFor="editable-subject">Betreff</SubjectLabel>
@@ -204,6 +214,26 @@ export function Result() {
             <MetaItem>
               <span>Ton</span>
               <strong>{answers.tone}</strong>
+            </MetaItem>
+            <MetaItem>
+              <span>Eingabe</span>
+              <strong>
+                {generatedLetter.meta?.inputLanguageLabel || "Deutsch"}
+              </strong>
+            </MetaItem>
+            <MetaItem>
+              <span>Ausgabe</span>
+              <strong>
+                {generatedLetter.meta?.outputLanguageLabel || "Deutsch"}
+              </strong>
+            </MetaItem>
+            <MetaItem>
+              <span>Modus</span>
+              <strong>
+                {generatedLetter.meta?.generationMode === "local-template"
+                  ? "Lokal"
+                  : "KI"}
+              </strong>
             </MetaItem>
             <MetaItem>
               <span>Status</span>

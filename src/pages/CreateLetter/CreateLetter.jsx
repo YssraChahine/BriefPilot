@@ -3,7 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../components/Button/Button";
 import { FormField } from "../../components/FormField/FormField";
 import { categories } from "../../data/categories";
-import { formQuestions, toneOptions } from "../../data/formQuestions";
+import {
+  formQuestions,
+  inputLanguageOptions,
+  outputLanguageOptions,
+  toneOptions,
+} from "../../data/formQuestions";
 import {
   clearSavedForm,
   loadSavedForm,
@@ -35,6 +40,8 @@ import {
 } from "./CreateLetter.styles";
 
 const initialTone = "sachlich";
+const initialInputLanguage = "de";
+const initialOutputLanguage = "de";
 
 export function CreateLetter() {
   const { categoryId } = useParams();
@@ -52,7 +59,11 @@ export function CreateLetter() {
         ...values,
         [question.id]: "",
       }),
-      { tone: initialTone },
+      {
+        tone: initialTone,
+        inputLanguage: initialInputLanguage,
+        outputLanguage: initialOutputLanguage,
+      },
     );
   }, [questions]);
 
@@ -119,6 +130,14 @@ export function CreateLetter() {
         nextErrors[question.id] = "Bitte fülle dieses Feld aus.";
       }
     });
+
+    if (!formValues.inputLanguage) {
+      nextErrors.inputLanguage = "Bitte wähle eine Eingabesprache aus.";
+    }
+
+    if (!formValues.outputLanguage) {
+      nextErrors.outputLanguage = "Bitte wähle eine Ausgabesprache aus.";
+    }
 
     if (!formValues.tone) {
       nextErrors.tone = "Bitte wähle einen Ton aus.";
@@ -191,6 +210,34 @@ export function CreateLetter() {
 
         <Form onSubmit={handleSubmit}>
           <FieldGroup>
+            <FormField
+              id="inputLanguage"
+              label="In welcher Sprache möchtest du deine Situation beschreiben?"
+              hint="Du kannst deine Angaben auf Deutsch oder Englisch schreiben. Der fertige Brief wird auf Deutsch erstellt."
+              type="select"
+              value={formValues.inputLanguage}
+              onChange={(event) =>
+                handleChange("inputLanguage", event.target.value)
+              }
+              options={inputLanguageOptions}
+              required
+              error={errors.inputLanguage}
+            />
+
+            <FormField
+              id="outputLanguage"
+              label="In welcher Sprache soll der Brief erstellt werden?"
+              hint="BriefPilot erstellt den fertigen Entwurf aktuell auf Deutsch."
+              type="select"
+              value={formValues.outputLanguage}
+              onChange={(event) =>
+                handleChange("outputLanguage", event.target.value)
+              }
+              options={outputLanguageOptions}
+              required
+              error={errors.outputLanguage}
+            />
+
             {questions.map((question) => (
               <FormField
                 key={question.id}
@@ -258,8 +305,11 @@ export function CreateLetter() {
           </ProgressTrack>
 
           <Checklist>
+            <ChecklistItem>
+              Angaben auf Deutsch oder Englisch möglich
+            </ChecklistItem>
+            <ChecklistItem>Deutscher Briefentwurf als Ergebnis</ChecklistItem>
             <ChecklistItem>Automatische Speicherung im Browser</ChecklistItem>
-            <ChecklistItem>Klare Beschreibung des Sachverhalts</ChecklistItem>
             <ChecklistItem>Konkretes Ziel des Schreibens</ChecklistItem>
             <ChecklistItem>Passender Ton für die Situation</ChecklistItem>
           </Checklist>
